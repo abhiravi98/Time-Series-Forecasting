@@ -1,0 +1,50 @@
+# Install the 'forecast' package (if not already installed)
+install.packages('forecast')
+
+# Load the 'forecast' package
+library(forecast)
+
+# Check the class of the 'nottem' dataset
+class(nottem)
+
+# Convert 'nottem' to a data frame
+dum1 <- as.data.frame(nottem)
+
+# Calculate the cycle of the 'nottem' time series
+cycle(nottem)
+
+# Create a color palette for the box plot
+my_colors <- rainbow(12)
+
+# Generate a box plot of 'nottem' by month with customizations
+boxplot(split(nottem, cycle(nottem)),
+        xlab = "Month", ylab = "Temperature(°F)",
+        col = my_colors, # Assign colors to each box
+        border = "black", # Set the border color
+        main = "Monthly Average Temperatures by Month",
+        names = month.abb, # Use abbreviated month names as labels
+        outline = FALSE) # Remove outliers
+
+# Plot the 'nottem' time series
+plot(nottem)
+
+# Convert 'nottem' to a time series with frequency=12
+data <- ts(nottem, frequency = 12)
+
+# Decompose the time series 'data' into trend, seasonal, and random components using multiplicative decomposition
+d <- decompose(data, "multiplicative")
+
+# Plot the decomposed components
+plot(d)
+
+# Fit an ARIMA model to the 'nottem' time series
+model <- auto.arima(nottem)
+
+# Summarize the ARIMA model
+summary(model)
+
+# Forecast the 'nottem' time series using the ARIMA model, with a forecast horizon of 10 years (120 months) and a confidence level of 95%
+f <- forecast(model, level = c(95), h = 10 * 12)
+
+# Plot the forecasted values along with prediction intervals
+plot(f)
